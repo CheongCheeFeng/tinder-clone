@@ -1,0 +1,11 @@
+# Ditribution file
+dist
+
+# Installed packages
+node_modules
+
+# AWS folders
+*/.js
+
+#Others
+.vscode
