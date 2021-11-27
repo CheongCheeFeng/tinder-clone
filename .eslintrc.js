@@ -16,10 +16,32 @@ module.exports = {
   rules: {
     'react/function-component-definition': [
       2,
-      { namedComponents: 'function-declaration' },
+      { namedComponents: 'arrow-function' },
     ],
+    'arrow-body-style': 0,
     'no-use-before-define': [2, { variables: false }],
     'no-console': 0,
     'react/style-prop-object': 0,
+    'max-len': 0,
+  },
+  settings: {
+    'import/resolver': {
+      node: {
+        moduleDirectory: ['src', 'node_modules'],
+        extensions: [
+          '.js',
+          '.jsx',
+          '.ts',
+          '.tsx',
+          '.web.js',
+          '.web.jsx',
+          '.web.ts',
+          '.web.tsx',
+          '.json',
+        ],
+      },
+      components: './src/components',
+      screens: './src/screens',
+    },
   },
 };

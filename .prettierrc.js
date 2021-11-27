@@ -5,5 +5,4 @@ module.exports = {
   endOfLine: 'auto',
   bracketSpacing: true,
   semi: true,
-  newlineAfterImport: true,
 };

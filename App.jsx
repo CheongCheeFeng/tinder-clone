@@ -1,13 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { Text, View } from 'react-native';
-import tw from 'tailwind-rn';
+import { NavigationContainer } from '@react-navigation/native';
 
-export default function App() {
+import React from 'react';
+import MainStackNavigator from './src/MainNavigator';
+
+const App = () => {
   return (
-    <View style={tw('justify-center flex-1 items-center')}>
-      <Text>Hello roshan</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <MainStackNavigator />
+    </NavigationContainer>
   );
-}
+};
+export default App;
