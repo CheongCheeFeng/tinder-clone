@@ -23,6 +23,11 @@ module.exports = {
     'no-console': 0,
     'react/style-prop-object': 0,
     'max-len': 0,
+    'linebreak-style': 0,
+    'import/no-extraneous-dependencies': 0,
+    'react/jsx-filename-extension': 0,
+    'react/prop-types': 0,
+    'react/jsx-no-constructed-context-values': 0,
   },
   settings: {
     'import/resolver': {
