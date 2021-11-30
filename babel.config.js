@@ -1,4 +1,6 @@
-module.exports = (api) => {
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable func-names */
+module.exports = function (api) {
   api.cache(true);
   return {
     presets: ['babel-preset-expo'],
@@ -29,6 +31,17 @@ module.exports = (api) => {
             '.tsx',
             '.json',
           ],
+        },
+      ],
+      [
+        'module:react-native-dotenv',
+        {
+          moduleName: 'react-native-dotenv',
+          path: '.env',
+          blacklist: null,
+          whitelist: null,
+          safe: false,
+          allowUndefined: true,
         },
       ],
     ],
