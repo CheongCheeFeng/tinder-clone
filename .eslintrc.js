@@ -30,6 +30,7 @@ module.exports = {
     'react/jsx-no-constructed-context-values': 0,
     'implicit-arrow-linebreak': 0,
     'object-curly-newline': 0,
+    'global-require': 0,
   },
   settings: {
     'import/resolver': {

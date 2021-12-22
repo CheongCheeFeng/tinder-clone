@@ -25,19 +25,19 @@ const config = {
 
 export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
-  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loading, setLoading] = useState(false);
 
   useEffect(
     () =>
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
+      onAuthStateChanged(auth, (loggedInUser) => {
+        if (loggedInUser) {
           // Logged in
-          setLoggedInUser(user);
+          setUser(loggedInUser);
         } else {
           // Not logged in
-          setLoggedInUser(null);
+          setUser(null);
         }
 
         setLoadingInitial(false);
@@ -74,13 +74,13 @@ export const AuthProvider = ({ children }) => {
 
   const memoValue = useMemo(
     () => ({
-      loggedInUser,
+      user,
       loading,
       error,
       signInWithGoogle,
       logout,
     }),
-    [loggedInUser, loading, error],
+    [user, loading, error],
   );
 
   return (

@@ -6,10 +6,10 @@ import AuthStackNavigator from 'navigators/AuthStackNavigator';
 import useAuth from 'hooks/useAuth';
 
 const AppContainer = () => {
-  const { loggedInUser } = useAuth();
+  const { user } = useAuth();
   return (
     <NavigationContainer>
-      {loggedInUser ? <MainStackNavigator /> : <AuthStackNavigator />}
+      {user ? <MainStackNavigator /> : <AuthStackNavigator />}
     </NavigationContainer>
   );
 };
