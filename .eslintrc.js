@@ -31,6 +31,9 @@ module.exports = {
     'implicit-arrow-linebreak': 0,
     'object-curly-newline': 0,
     'global-require': 0,
+    'no-confusing-arrow': 0,
+    'react/jsx-curly-newline': 0,
+    'react/jsx-one-expression-per-line': 0,
   },
   settings: {
     'import/resolver': {

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'tailwind-rn';
@@ -7,6 +7,8 @@ import useAuth from 'hooks/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons';
 import Swiper from 'react-native-deck-swiper';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 const DUMMY_USER = [
   {
@@ -41,7 +43,18 @@ const DUMMY_USER = [
 const Home = () => {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
+  const [profiles, setProfiles] = useState([]);
   const swipeRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'users', user.uid), (snapshot) => {
+      if (!snapshot.exists()) {
+        navigation.navigate('Modal');
+      }
+    });
+
+    return unsubscribe();
+  }, []);
 
   return (
     <SafeAreaView style={tw('flex-1')}>
@@ -49,7 +62,7 @@ const Home = () => {
 
       {/* Header Start */}
       <View style={tw('items-center justify-between flex-row px-5')}>
-        <TouchableOpacity onPress={logout}>
+        <TouchableOpacity onPress={() => navigation.navigate('Modal')}>
           <Image
             style={tw('h-10 w-10 rounded-full')}
             source={{ uri: user.photoURL }}
@@ -73,7 +86,7 @@ const Home = () => {
         <Swiper
           ref={swipeRef}
           containerStyle={{ backgroundColor: 'transparent' }}
-          cards={DUMMY_USER}
+          cards={profiles}
           stackSize={5}
           cardIndex={0}
           verticalSwipe={false}
@@ -111,34 +124,54 @@ const Home = () => {
           onSwipedRight={() => {
             console.log('Swipe Match');
           }}
-          renderCard={(card) => (
-            <View
-              key={card.id}
-              style={[
-                tw('relative bg-white h-3/4 rounded-xl'),
-                styles.cardShadow,
-              ]}
-            >
-              <Image
-                style={tw('absolute top-0 h-full w-full rounded-xl')}
-                source={{ uri: card.photoURL }}
-              />
+          renderCard={(card) =>
+            card ? (
               <View
-                style={tw(
-                  'absolute bottom-0 bg-white h-20 w-full flex-row justify-between items-center px-6 py-2 rounded-b-xl',
-                )}
+                key={card.id}
+                style={[
+                  tw('relative bg-white h-3/4 rounded-xl'),
+                  styles.cardShadow,
+                ]}
               >
-                <View>
-                  <Text style={tw('text-2xl font-bold')}>
-                    {card.firstName}
-                    {card.lastName}
-                  </Text>
-                  <Text>{card.occupation}</Text>
+                <Image
+                  style={tw('absolute top-0 h-full w-full rounded-xl')}
+                  source={{ uri: card.photoURL }}
+                />
+                <View
+                  style={tw(
+                    'absolute bottom-0 bg-white h-20 w-full flex-row justify-between items-center px-6 py-2 rounded-b-xl',
+                  )}
+                >
+                  <View>
+                    <Text style={tw('text-2xl font-bold')}>
+                      {card.firstName}
+                      {card.lastName}
+                    </Text>
+                    <Text>{card.occupation}</Text>
+                  </View>
+                  <Text style={tw('text-2xl font-bold')}>{card.age}</Text>
                 </View>
-                <Text style={tw('text-2xl font-bold')}>{card.age}</Text>
               </View>
-            </View>
-          )}
+            ) : (
+              <View
+                style={[
+                  tw(
+                    'relative bg-white h-3/4 rounded-xl justify-center items-center',
+                  ),
+                  styles.cardShadow,
+                ]}
+              >
+                <Text style={tw('font-bold pb-5')}>No more profiles</Text>
+
+                <Image
+                  style={tw('h-20 w-20')}
+                  height={100}
+                  width={100}
+                  source={{ uri: 'https://links.papareact.com/6gb' }}
+                />
+              </View>
+            )
+          }
         />
       </View>
       {/* Card End */}
