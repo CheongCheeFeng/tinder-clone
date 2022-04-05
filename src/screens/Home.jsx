@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'tailwind-rn';
@@ -7,14 +7,13 @@ import useAuth from 'hooks/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons';
 import Swiper from 'react-native-deck-swiper';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
 
 const DUMMY_USER = [
   {
     id: 1,
-    firstName: 'Elon',
-    lastName: 'Musk',
+    displayName: 'Elon Musk',
     occupation: 'Billionaire',
     photoURL:
       'https://cdn.britannica.com/45/223045-050-A6453D5D/Telsa-CEO-Elon-Musk-2014.jpg',
@@ -22,8 +21,7 @@ const DUMMY_USER = [
   },
   {
     id: 2,
-    firstName: 'Tom',
-    lastName: 'Holland',
+    displayName: 'Tom Holland',
     occupation: 'Spider Man',
     photoURL:
       'https://www.gannett-cdn.com/presto/2021/12/10/USAT/5566ade2-b43b-4e78-948d-032fe3a1909a-XXX_120921_NYC_TomHolland007.JPG?width=1200&disable=upscale&format=pjpg&auto=webp',
@@ -31,8 +29,7 @@ const DUMMY_USER = [
   },
   {
     id: 3,
-    firstName: 'Peter',
-    lastName: 'Parker',
+    displayName: 'Peter Parker',
     occupation: 'Avengers',
     photoURL:
       'https://static.wikia.nocookie.net/marvelcinematicuniverse/images/1/1e/Spider-Man_%28No_Way_Home%29.jpeg/revision/latest?cb=20211024193518',
@@ -53,22 +50,46 @@ const Home = () => {
       }
     });
 
-    return unsubscribe();
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    let unsubscribe;
+
+    const fetchProfiles = async () => {
+      unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
+        setProfiles(
+          snapshot.docs
+            .filter((docData) => docData.id !== user.uid)
+            .map((docData) => ({
+              id: docData.id,
+              ...docData.data(),
+            })),
+        );
+      });
+    };
+
+    fetchProfiles();
+    return unsubscribe;
   }, []);
 
   return (
     <SafeAreaView style={tw('flex-1')}>
       <StatusBar style="auto" />
-
       {/* Header Start */}
-      <View style={tw('items-center justify-between flex-row px-5')}>
-        <TouchableOpacity onPress={() => navigation.navigate('Modal')}>
+      <View
+        style={[
+          tw('items-center justify-between flex-row px-5 py-1'),
+          styles.headerShadow,
+        ]}
+      >
+        <TouchableOpacity onPress={logout}>
           <Image
             style={tw('h-10 w-10 rounded-full')}
             source={{ uri: user.photoURL }}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Modal')}>
           <Image
             style={[tw('h-14 w-14 rounded-full'), { resizeMode: 'contain' }]}
             source={require('images/tinder-logo.png')}
@@ -144,8 +165,7 @@ const Home = () => {
                 >
                   <View>
                     <Text style={tw('text-2xl font-bold')}>
-                      {card.firstName}
-                      {card.lastName}
+                      {card.displayName}
                     </Text>
                     <Text>{card.occupation}</Text>
                   </View>
@@ -206,5 +226,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
+  },
+  headerShadow: {
+    backgroundColor: '#f2f2f2',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
   },
 });

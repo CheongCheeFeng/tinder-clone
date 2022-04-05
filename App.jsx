@@ -4,7 +4,7 @@ import AppContainer from 'AppContainer';
 import { LogBox } from 'react-native';
 
 LogBox.ignoreAllLogs();
-
+LogBox.ignoreLogs(['Setting a timer']);
 const App = () => {
   return (
     <AuthProvider>

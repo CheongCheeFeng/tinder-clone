@@ -34,6 +34,11 @@ module.exports = {
     'no-confusing-arrow': 0,
     'react/jsx-curly-newline': 0,
     'react/jsx-one-expression-per-line': 0,
+    'operator-linebreak': [
+      'error',
+      'after',
+      { overrides: { '?': 'before', ':': 'before' } },
+    ],
   },
   settings: {
     'import/resolver': {
