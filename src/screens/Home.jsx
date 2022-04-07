@@ -7,7 +7,15 @@ import useAuth from 'hooks/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons';
 import Swiper from 'react-native-deck-swiper';
-import { collection, doc, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 import { db } from '../../firebase';
 
 const DUMMY_USER = [
@@ -57,21 +65,53 @@ const Home = () => {
     let unsubscribe;
 
     const fetchProfiles = async () => {
-      unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
-        setProfiles(
-          snapshot.docs
-            .filter((docData) => docData.id !== user.uid)
-            .map((docData) => ({
-              id: docData.id,
-              ...docData.data(),
-            })),
-        );
-      });
+      const passed = await getDocs(
+        collection(db, 'users', user.uid, 'passed'),
+      ).then((snapshot) => snapshot.docs.map((docData) => docData.id));
+
+      const liked = await getDocs(
+        collection(db, 'users', user.uid, 'liked'),
+      ).then((snapshot) => snapshot.docs.map((docData) => docData.id));
+
+      const passedUid = passed.length > 0 ? passed : [user.uid];
+
+      const likedUid = liked.length > 0 ? liked : [user.uid];
+
+      unsubscribe = onSnapshot(
+        query(
+          collection(db, 'users'),
+          where('id', 'not-in', [...passedUid, ...likedUid]),
+        ),
+        (snapshot) => {
+          setProfiles(
+            snapshot.docs
+              .filter((docData) => docData.id !== user.uid)
+              .map((docData) => ({
+                id: docData.id,
+                ...docData.data(),
+              })),
+          );
+        },
+      );
     };
 
     fetchProfiles();
     return unsubscribe;
   }, []);
+
+  const onSwipedLeft = async (index) => {
+    if (!profiles[index]) return;
+
+    const userSwiped = profiles[index];
+    setDoc(doc(db, 'users', user.uid, 'passed', userSwiped.id), userSwiped);
+  };
+
+  const onSwipedRight = async (index) => {
+    if (!profiles[index]) return;
+
+    const userSwiped = profiles[index];
+    setDoc(doc(db, 'users', user.uid, 'liked', userSwiped.id), userSwiped);
+  };
 
   return (
     <SafeAreaView style={tw('flex-1')}>
@@ -139,10 +179,12 @@ const Home = () => {
               },
             },
           }}
-          onSwipedLeft={() => {
+          onSwipedLeft={(cardIndex) => {
+            onSwipedLeft(cardIndex);
             console.log('Swipe Pass');
           }}
-          onSwipedRight={() => {
+          onSwipedRight={(cardIndex) => {
+            onSwipedRight(cardIndex);
             console.log('Swipe Match');
           }}
           renderCard={(card) =>
