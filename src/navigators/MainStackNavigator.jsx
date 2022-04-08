@@ -17,7 +17,7 @@ const MainStackNavigator = () => {
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={Modal} />
       </Stack.Group>
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+      <Stack.Group screenOptions={{ presentation: 'transparentModal' }}>
         <Stack.Screen name="Match" component={Match} />
       </Stack.Group>
     </Stack.Navigator>

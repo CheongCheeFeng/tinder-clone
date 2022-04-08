@@ -21,33 +21,6 @@ import {
 import generateID from 'lib/generateId';
 import { db } from '../../firebase';
 
-const DUMMY_USER = [
-  {
-    id: 1,
-    displayName: 'Elon Musk',
-    occupation: 'Billionaire',
-    photoURL:
-      'https://cdn.britannica.com/45/223045-050-A6453D5D/Telsa-CEO-Elon-Musk-2014.jpg',
-    age: 50,
-  },
-  {
-    id: 2,
-    displayName: 'Tom Holland',
-    occupation: 'Spider Man',
-    photoURL:
-      'https://www.gannett-cdn.com/presto/2021/12/10/USAT/5566ade2-b43b-4e78-948d-032fe3a1909a-XXX_120921_NYC_TomHolland007.JPG?width=1200&disable=upscale&format=pjpg&auto=webp',
-    age: 25,
-  },
-  {
-    id: 3,
-    displayName: 'Peter Parker',
-    occupation: 'Avengers',
-    photoURL:
-      'https://static.wikia.nocookie.net/marvelcinematicuniverse/images/1/1e/Spider-Man_%28No_Way_Home%29.jpeg/revision/latest?cb=20211024193518',
-    age: 27,
-  },
-];
-
 const Home = () => {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
