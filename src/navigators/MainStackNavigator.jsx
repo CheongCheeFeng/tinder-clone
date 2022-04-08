@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import Chat from 'screens/Chat';
 import Home from 'screens/Home';
+import Match from 'screens/Match';
 import Modal from 'screens/Modal';
 
 const MainStackNavigator = () => {
@@ -15,6 +16,9 @@ const MainStackNavigator = () => {
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={Modal} />
+      </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen name="Match" component={Match} />
       </Stack.Group>
     </Stack.Navigator>
   );

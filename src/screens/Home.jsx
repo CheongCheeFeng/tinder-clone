@@ -15,7 +15,10 @@ import {
   getDocs,
   query,
   where,
+  getDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
+import generateID from 'lib/generateId';
 import { db } from '../../firebase';
 
 const DUMMY_USER = [
@@ -104,12 +107,56 @@ const Home = () => {
 
     const userSwiped = profiles[index];
     setDoc(doc(db, 'users', user.uid, 'passed', userSwiped.id), userSwiped);
+    console.log('Swipe Pass');
   };
 
   const onSwipedRight = async (index) => {
     if (!profiles[index]) return;
 
     const userSwiped = profiles[index];
+    const loggedInProfile = await (
+      await getDoc(doc(db, 'users', user.uid))
+    ).data();
+
+    // Check if the user swiped on you
+    getDoc(doc(db, 'users', userSwiped.id, 'liked', user.uid)).then(
+      (documentSnapshot) => {
+        console.log(documentSnapshot);
+        if (documentSnapshot.exists()) {
+          // user has matched with you before you mathced with them
+          console.log(`You mathced with ${userSwiped.displayName}`);
+
+          setDoc(
+            doc(db, 'users', user.uid, 'liked', userSwiped.id),
+            userSwiped,
+          );
+
+          // Create a MATCH
+          setDoc(doc(db, 'matches', generateID(user.uid, userSwiped.id)), {
+            users: {
+              [user.uid]: loggedInProfile,
+              [userSwiped.id]: userSwiped,
+            },
+            usersMatched: [user.uid, userSwiped.id],
+            timestamp: serverTimestamp(),
+          });
+
+          navigation.navigate('Match', {
+            loggedInProfile,
+            userSwiped,
+          });
+        } else {
+          // user has not matched with you before
+          console.log(`You liked on ${userSwiped.displayName}`);
+
+          setDoc(
+            doc(db, 'users', user.uid, 'liked', userSwiped.id),
+            userSwiped,
+          );
+        }
+      },
+    );
+
     setDoc(doc(db, 'users', user.uid, 'liked', userSwiped.id), userSwiped);
   };
 
@@ -181,11 +228,9 @@ const Home = () => {
           }}
           onSwipedLeft={(cardIndex) => {
             onSwipedLeft(cardIndex);
-            console.log('Swipe Pass');
           }}
           onSwipedRight={(cardIndex) => {
             onSwipedRight(cardIndex);
-            console.log('Swipe Match');
           }}
           renderCard={(card) =>
             card ? (
