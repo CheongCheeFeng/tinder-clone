@@ -3,6 +3,7 @@ import React from 'react';
 import Chat from 'screens/Chat';
 import Home from 'screens/Home';
 import Match from 'screens/Match';
+import Message from 'screens/Message';
 import Modal from 'screens/Modal';
 
 const MainStackNavigator = () => {
@@ -13,6 +14,7 @@ const MainStackNavigator = () => {
       <Stack.Group>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Chat" component={Chat} />
+        <Stack.Screen name="Message" component={Message} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={Modal} />

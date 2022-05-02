@@ -94,7 +94,6 @@ const Home = () => {
     // Check if the user swiped on you
     getDoc(doc(db, 'users', userSwiped.id, 'liked', user.uid)).then(
       (documentSnapshot) => {
-        console.log(documentSnapshot);
         if (documentSnapshot.exists()) {
           // user has matched with you before you mathced with them
           console.log(`You mathced with ${userSwiped.displayName}`);
